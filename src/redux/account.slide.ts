@@ -1,4 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import axios from 'axios';
+import axiosClient from '../helpers/axios.client';
 import { AppState } from './store';
 
 export interface Account {
@@ -18,12 +20,15 @@ const initialState: AccountState = {
 export const loginAsync = createAsyncThunk(
   'account/loginAsync',
   async (params: {email: string, password: string}) => {
-    const result = {
-      username: 'wizpham',
-      email: 'admin@site.com',
-      description: 'This is a test description',
-    };
+    const result = await axiosClient.post<Account>('/account/signin', params);
+    return result;
+  },
+);
 
+export const getInfoAsync = createAsyncThunk(
+  'account/getInfoAsync',
+  async () => {
+    const result = await axios.get<Account>('/account');
     return result;
   },
 );
@@ -42,7 +47,7 @@ export const accountSlice = createSlice({
         state.value = {};
       })
       .addCase(loginAsync.fulfilled, (state, action) => {
-        state.value = action.payload;
+        state.value = action.payload.data;
       });
   },
 });
