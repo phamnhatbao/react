@@ -1,4 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
+import { listenerMiddleware } from '../helpers/listener.middleware';
 
 import accountReducer from './account.slide';
 
@@ -7,6 +8,7 @@ export function makeStore() {
     reducer: {
       account: accountReducer,
     },
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().prepend(listenerMiddleware.middleware),
   });
 }
 

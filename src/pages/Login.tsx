@@ -1,7 +1,8 @@
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { loginAsync } from '../redux/account.slide';
+import { listenerMiddleware } from '../helpers/listener.middleware';
+import { getInfoAsync, loginAsync } from '../redux/account.slide';
 import { AppDispatch, AppState } from '../redux/store';
 
 function Login(): JSX.Element {
@@ -14,13 +15,22 @@ function Login(): JSX.Element {
   });
   const dispatch: AppDispatch = useDispatch();
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm();
-  const submitLoginForm = (formData: any) => {
-    console.log(formData);
-    if (formData.email === 'admin@site.com' && formData.password === 'root') {
-      dispatch(loginAsync(formData));
+  const { register, handleSubmit, formState: { errors } } = useForm();
+  const submitLoginForm = async (formData: any) => {
+    if (formData.email && formData.password) {
+      await dispatch(loginAsync(formData));
+      await dispatch(getInfoAsync());
+      navigate('/dashboard');
     }
   };
+
+  listenerMiddleware.startListening({
+    type: 'account/loginAsync',
+    effect: async (action, listenerApi) => {
+      console.log('listenerMiddleware action', action);
+      console.log('listenerMiddleware listenerApi', listenerApi);
+    },
+  });
 
   return (
     <div className='max-w-screen-xl px-4 py-16 mx-auto sm:px-6 lg:px-8'>

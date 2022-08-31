@@ -7,7 +7,11 @@ const axiosClient = axios.create({
   headers: {
     'content-type': 'application/json',
   },
-  paramsSerializer: params => queryString.stringify(params),
+  paramsSerializer: params => {
+    const result = queryString.stringify(params);
+    console.log('paramsSerializer', result);
+    return result;
+  },
 });
 
 axiosClient.interceptors.request.use(async (config) => {
@@ -15,10 +19,10 @@ axiosClient.interceptors.request.use(async (config) => {
 });
 
 axiosClient.interceptors.response.use((response) => {
-  // if (response && response.data) {
-  //   return response.data;
-  // }
-  return response;
+  if (response && response.data) {
+    console.log('axiosClient response', response);
+    return response.data;
+  }
 }, err => {
   return {err};
 });

@@ -1,25 +1,25 @@
 import './App.css';
-import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import ProtectedRoute, { ProtectedRouteProps } from './components/ProtectedRoute';
-import { useSelector } from 'react-redux';
-import { AppState } from './redux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, AppState } from './redux/store';
 import Profile from './pages/Profile';
 import { useEffect, useRef } from 'react';
+import { getInfoAsync } from './redux/account.slide';
 
 function App(): JSX.Element {
-  const navigate = useNavigate();
+  const dispatch: AppDispatch = useDispatch();
   const account = useSelector((state: AppState) => {
     return state.account.value;
   });
 
   const mounted = useRef<any>();
-  const location = useLocation();
+  const { state } = useLocation();
 
   useEffect(() => {
     console.log("Location changed", location);
-    navigate
   }, [location]);
   
   useEffect(() => {
@@ -29,16 +29,21 @@ function App(): JSX.Element {
       /**
        * TODO: Check token in memory. If not: call getInfo API to get token, if API return false, redirect to login page
        */
-      console.log('Check account', account);
+      dispatch(getInfoAsync());
     } else {
       // !componentDidUpdate cycle
       console.log('componentDidUpdate', mounted);
+      const previousPath = (state as any)?.previousPath;
+      if (previousPath) {
+        console.log('Previous Path: ', previousPath);
+      }
     }
   });
 
   const defaultProtectedRouteProps: Omit<ProtectedRouteProps, 'outlet'> = {
-    isAuthenticated: !!account,
+    isAuthenticated: !!account || !!sessionStorage.getItem('account'),
     authenticationPath: '/login',
+    roles: [''],
   };
 
   return (
