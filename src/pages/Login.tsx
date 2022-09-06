@@ -1,7 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { listenerMiddleware } from '../helpers/listener.middleware';
 import { getInfoAsync, loginAsync } from '../redux/account.slide';
 import { AppDispatch, AppState } from '../redux/store';
 
@@ -23,14 +22,6 @@ function Login(): JSX.Element {
       navigate('/dashboard');
     }
   };
-
-  listenerMiddleware.startListening({
-    type: 'account/loginAsync',
-    effect: async (action, listenerApi) => {
-      console.log('listenerMiddleware action', action);
-      console.log('listenerMiddleware listenerApi', listenerApi);
-    },
-  });
 
   return (
     <div className='max-w-screen-xl px-4 py-16 mx-auto sm:px-6 lg:px-8'>
