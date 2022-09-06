@@ -1,24 +1,25 @@
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { loginAsync } from '../redux/account.slide';
+import { getInfoAsync, loginAsync } from '../redux/account.slide';
 import { AppDispatch, AppState } from '../redux/store';
 
 function Login(): JSX.Element {
   const navigate = useNavigate();
   useSelector((state: AppState) => {
     if (state.account.value?.username) {
-      return navigate('/');
+      return navigate('/dashboard');
     }
     return state.account.value;
   });
   const dispatch: AppDispatch = useDispatch();
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm();
-  const submitLoginForm = (formData: any) => {
-    console.log(formData);
-    if (formData.email === 'admin@site.com' && formData.password === 'root') {
-      dispatch(loginAsync(formData));
+  const { register, handleSubmit, formState: { errors } } = useForm();
+  const submitLoginForm = async (formData: any) => {
+    if (formData.email && formData.password) {
+      await dispatch(loginAsync(formData));
+      await dispatch(getInfoAsync());
+      navigate('/dashboard');
     }
   };
 

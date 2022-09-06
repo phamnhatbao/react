@@ -1,10 +1,12 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import axiosClient from '../helpers/axios.client';
 import { AppState } from './store';
 
 export interface Account {
   username?: string;
   email?: string;
   description?: string;
+  role?: string;
 }
 
 export interface AccountState {
@@ -17,13 +19,15 @@ const initialState: AccountState = {
 
 export const loginAsync = createAsyncThunk(
   'account/loginAsync',
-  async (params: {email: string, password: string}) => {
-    const result = {
-      username: 'wizpham',
-      email: 'admin@site.com',
-      description: 'This is a test description',
-    };
+  (params: {email: string, password: string}) => {
+    axiosClient.post<Account>('/account/signin', params);
+  },
+);
 
+export const getInfoAsync = createAsyncThunk(
+  'account/getInfoAsync',
+  async () => {
+    const result = await axiosClient.get<Account>('/account');
     return result;
   },
 );
@@ -38,12 +42,20 @@ export const accountSlice = createSlice({
   },
   extraReducers: builder => {
     builder
+      // loginAsync
       .addCase(loginAsync.rejected, (state) => {
-        state.value = {};
+        state.value = null;
+        sessionStorage.removeItem('account');
       })
-      .addCase(loginAsync.fulfilled, (state, action) => {
-        state.value = action.payload;
-      });
+      .addCase(loginAsync.fulfilled, (state) => {
+        state.value = {};
+        sessionStorage.setItem('account', 'true');
+      })
+      // getInfoAsync
+      .addCase(getInfoAsync.fulfilled, (state, action) => {
+        state.value = action.payload.data;
+      })
+      ;
   },
 });
 
