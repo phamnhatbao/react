@@ -19,9 +19,8 @@ const initialState: AccountState = {
 
 export const loginAsync = createAsyncThunk(
   'account/loginAsync',
-  async (params: {email: string, password: string}) => {
-    await axiosClient.post<Account>('/account/signin', params);
-    // return getInfoAsync();
+  (params: {email: string, password: string}) => {
+    axiosClient.post<Account>('/account/signin', params);
   },
 );
 
@@ -29,7 +28,6 @@ export const getInfoAsync = createAsyncThunk(
   'account/getInfoAsync',
   async () => {
     const result = await axiosClient.get<Account>('/account');
-    console.log('account/getInfoAsync', result);
     return result;
   },
 );
@@ -55,7 +53,6 @@ export const accountSlice = createSlice({
       })
       // getInfoAsync
       .addCase(getInfoAsync.fulfilled, (state, action) => {
-        console.log('extraReducers getInfoAsync', action);
         state.value = action.payload.data;
       })
       ;

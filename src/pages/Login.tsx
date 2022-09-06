@@ -9,7 +9,7 @@ function Login(): JSX.Element {
   const navigate = useNavigate();
   useSelector((state: AppState) => {
     if (state.account.value?.username) {
-      return navigate('/');
+      return navigate('/dashboard');
     }
     return state.account.value;
   });
