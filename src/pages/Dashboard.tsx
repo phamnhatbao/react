@@ -3,9 +3,7 @@ import Layout from '../components/Layout';
 function Dashboard(): JSX.Element {
   return (
     <Layout>
-      <span>
-        Chat windows
-      </span>
+      <span>Chat windows</span>
     </Layout>
   );
 }

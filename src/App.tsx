@@ -9,6 +9,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import Error from './pages/Error';
+import Testing from './pages/Testing';
 
 function App(): JSX.Element {
   const dispatch: AppDispatch = useDispatch();
@@ -42,6 +43,7 @@ function App(): JSX.Element {
     <Routes>
       <Route path='/' element={<Navigate to='/dashboard' replace />}></Route>
       <Route path='/login' element={<Login />}></Route>
+      <Route path='/testing' element={<Testing />}></Route>
       <Route path='/dashboard' element={<ProtectedRoute {...defaultProtectedRouteProps} outlet={<Dashboard />} />}></Route>
       <Route path='/profile' element={<ProtectedRoute {...defaultProtectedRouteProps} outlet={<Profile />} roles={['user']} />}></Route>
       <Route path='*' element={<Error />}></Route>

@@ -17,20 +17,14 @@ const initialState: AccountState = {
   value: null,
 };
 
-export const loginAsync = createAsyncThunk(
-  'account/loginAsync',
-  (params: {email: string, password: string}) => {
-    axiosClient.post<Account>('/account/signin', params);
-  },
-);
+export const loginAsync = createAsyncThunk('account/loginAsync', (params: { email: string; password: string }) => {
+  axiosClient.post<Account>('/account/signin', params);
+});
 
-export const getInfoAsync = createAsyncThunk(
-  'account/getInfoAsync',
-  async () => {
-    const result = await axiosClient.get<Account>('/account');
-    return result;
-  },
-);
+export const getInfoAsync = createAsyncThunk('account/getInfoAsync', async () => {
+  const result = await axiosClient.get<Account>('/account');
+  return result;
+});
 
 export const accountSlice = createSlice({
   name: 'account',
@@ -40,7 +34,7 @@ export const accountSlice = createSlice({
       state.value = {};
     },
   },
-  extraReducers: builder => {
+  extraReducers: (builder) => {
     builder
       // loginAsync
       .addCase(loginAsync.rejected, (state) => {
@@ -52,10 +46,13 @@ export const accountSlice = createSlice({
         sessionStorage.setItem('account', 'true');
       })
       // getInfoAsync
+      .addCase(getInfoAsync.rejected, (state) => {
+        state.value = null;
+        sessionStorage.removeItem('account');
+      })
       .addCase(getInfoAsync.fulfilled, (state, action) => {
         state.value = action.payload.data;
-      })
-      ;
+      });
   },
 });
 

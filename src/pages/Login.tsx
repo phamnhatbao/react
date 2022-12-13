@@ -3,9 +3,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { getInfoAsync, loginAsync } from '../redux/account.slide';
 import { AppDispatch, AppState } from '../redux/store';
+import { useEffect, useRef } from 'react';
+
+interface Login {
+  email: string;
+  password: string;
+}
 
 function Login(): JSX.Element {
   const navigate = useNavigate();
+  const mount = useRef(true);
   useSelector((state: AppState) => {
     if (state.account.value?.username) {
       return navigate('/dashboard');
@@ -14,12 +21,32 @@ function Login(): JSX.Element {
   });
   const dispatch: AppDispatch = useDispatch();
 
-  const { register, handleSubmit, formState: { errors } } = useForm();
-  const submitLoginForm = async (formData: any) => {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<Login>();
+
+  useEffect(() => {
+    if (mount.current) {
+      // Only run in first time
+      reset({ email: 'admin@yourstore.com', password: 'P@ssword123' });
+
+      mount.current = false;
+      return;
+    }
+  });
+  const submitLoginForm = async (formData: Login) => {
     if (formData.email && formData.password) {
       await dispatch(loginAsync(formData));
       await dispatch(getInfoAsync());
       navigate('/dashboard');
+      // dispatch(loginAsync(formData)).then(() => {
+      //   dispatch(getInfoAsync()).then(() => {
+      //     navigate('/dashboard');
+      //   });
+      // });
     }
   };
 
