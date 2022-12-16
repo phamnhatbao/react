@@ -1,17 +1,20 @@
 import Layout from '../components/Layout';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { toast } from 'react-toastify';
 
 function Testing(): JSX.Element {
+  const notify = () => toast('Testing');
   return (
     <Layout>
       <>
-        <style>
-          {`a {
-            color: red;
-          }`}
-        </style>
-        <a href='javascript:void(0);'>Something here</a>
+        {/*<style>*/}
+        {/*  {`a {*/}
+        {/*    color: red;*/}
+        {/*  }`}*/}
+        {/*</style>*/}
+        <button onClick={notify}>Notify!</button>
+        {/*<a href='javascript:void(0);'>Something here</a>*/}
         <CKEditor
           editor={ClassicEditor}
           data='<p>Hello from CKEditor 5!</p>'

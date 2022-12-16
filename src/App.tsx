@@ -1,4 +1,5 @@
 import './App.css';
+import 'react-toastify/dist/ReactToastify.css';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import ProtectedRoute, { ProtectedRouteProps } from './components/ProtectedRoute';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,6 +11,7 @@ import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import Error from './pages/Error';
 import Testing from './pages/Testing';
+import { ToastContainer } from 'react-toastify';
 
 function App(): JSX.Element {
   const dispatch: AppDispatch = useDispatch();
@@ -40,14 +42,17 @@ function App(): JSX.Element {
   };
 
   return (
-    <Routes>
-      <Route path='/' element={<Navigate to='/dashboard' replace />}></Route>
-      <Route path='/login' element={<Login />}></Route>
-      <Route path='/testing' element={<Testing />}></Route>
-      <Route path='/dashboard' element={<ProtectedRoute {...defaultProtectedRouteProps} outlet={<Dashboard />} />}></Route>
-      <Route path='/profile' element={<ProtectedRoute {...defaultProtectedRouteProps} outlet={<Profile />} roles={['user']} />}></Route>
-      <Route path='*' element={<Error />}></Route>
-    </Routes>
+    <>
+      <Routes>
+        <Route path='/' element={<Navigate to='/dashboard' replace />}></Route>
+        <Route path='/login' element={<Login />}></Route>
+        <Route path='/testing' element={<Testing />}></Route>
+        <Route path='/dashboard' element={<ProtectedRoute {...defaultProtectedRouteProps} outlet={<Dashboard />} />}></Route>
+        <Route path='/profile' element={<ProtectedRoute {...defaultProtectedRouteProps} outlet={<Profile />} roles={['user']} />}></Route>
+        <Route path='*' element={<Error />}></Route>
+      </Routes>
+      <ToastContainer />
+    </>
   );
 }
 
