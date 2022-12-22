@@ -1,36 +1,44 @@
-import axios from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import queryString from 'query-string';
 
-const axiosClient = axios.create({
-  baseURL: 'http://localhost:3000',
-  withCredentials: true,
-  headers: {
-    'content-type': 'application/json',
-  },
-
-  paramsSerializer: {
-    encode: (params: any) => {
-      const result = queryString.stringify(params);
-      console.log('paramsSerializer', result);
-      return result;
+export const baseAxios = (url: string, option?: AxiosRequestConfig): AxiosInstance => {
+  const ops: AxiosRequestConfig = Object.assign(
+    {},
+    {
+      baseUrl: url,
+      header: {
+        'Content-Type': 'application/json',
+      },
+      withCredentials: true,
+      paramsSerializer: (params: Record<string, any>) => {
+        return queryString.stringify(params);
+      },
     },
-  },
-});
+    option,
+  );
 
-axiosClient.interceptors.request.use(async (config) => {
-  return config;
-});
+  const client = axios.create(ops);
 
-axiosClient.interceptors.response.use(
-  (response) => {
-    if (response && response.data) {
-      console.log('axiosClient response', response);
-      return response.data;
-    }
-  },
-  (err) => {
-    throw { err };
-  },
-);
+  // Default interceptors
+  client.interceptors.request.use((config) => config);
+
+  client.interceptors.response.use(
+    (response) => {
+      if (response && response.data) return response.data;
+      return [];
+    },
+    (error) => {
+      if (error && error.response.status === 401) {
+        // Handle logic to remove auth data
+      }
+
+      return Promise.reject(error);
+    },
+  );
+
+  return client;
+};
+
+const axiosClient = baseAxios('http://localhost:3000');
 
 export default axiosClient;
